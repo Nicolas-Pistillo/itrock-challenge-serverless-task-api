@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.esbuild/
+.serverless/
+*.js.map
+data/
+.env
+coverage/
+
+# Claude Code
+CLAUDE.md
+.claude/

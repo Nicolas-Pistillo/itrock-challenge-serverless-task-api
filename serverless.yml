@@ -1,0 +1,76 @@
+service: task-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET, 'dev-secret-key-change-in-production'}
+    DB_PATH: ${env:DB_PATH, './data/itrock-challenge.db'}
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    platform: node
+    target: node18
+    external:
+      - better-sqlite3
+  serverless-offline:
+    httpPort: 3000
+    noPrependStageInUrl: true
+
+functions:
+  login:
+    handler: src/handlers/auth/login.handler
+    events:
+      - http:
+          path: /auth/login
+          method: post
+          cors: true
+
+  createTask:
+    handler: src/handlers/tasks/createTask.handler
+    events:
+      - http:
+          path: /tasks
+          method: post
+          cors: true
+
+  listTasks:
+    handler: src/handlers/tasks/listTasks.handler
+    events:
+      - http:
+          path: /tasks
+          method: get
+          cors: true
+
+  updateTask:
+    handler: src/handlers/tasks/updateTask.handler
+    events:
+      - http:
+          path: /tasks/{id}
+          method: patch
+          cors: true
+
+  deleteTask:
+    handler: src/handlers/tasks/deleteTask.handler
+    events:
+      - http:
+          path: /tasks/{id}
+          method: delete
+          cors: true
+
+  importTasks:
+    handler: src/handlers/tasks/importTasks.handler
+    events:
+      - http:
+          path: /tasks/import
+          method: post
+          cors: true
