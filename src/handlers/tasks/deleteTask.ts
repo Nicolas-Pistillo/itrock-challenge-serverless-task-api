@@ -12,6 +12,6 @@ const baseHandler = async (event: AuthenticatedEvent): Promise<APIGatewayProxyRe
   return success({ message: 'Task deleted successfully' });
 };
 
-export const handler = middy(baseHandler as never)
+export const handler = middy(baseHandler)
   .use(errorMiddleware())
   .use(authMiddleware());

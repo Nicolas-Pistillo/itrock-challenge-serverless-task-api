@@ -1,10 +1,15 @@
 import middy from '@middy/core';
-import { AppError } from '../utils/errors';
-import { error } from '../utils/httpResponse';
+import { AppError, ValidationError } from '../utils/errors';
+import { error, validationError } from '../utils/httpResponse';
 
 export const errorMiddleware = (): middy.MiddlewareObj => ({
   onError: async (request) => {
     const err = request.error as Error & { statusCode?: number };
+
+    if (err instanceof ValidationError) {
+      request.response = validationError(err.issues);
+      return;
+    }
 
     if (err instanceof AppError) {
       request.response = error(err.statusCode, err.code, err.message);

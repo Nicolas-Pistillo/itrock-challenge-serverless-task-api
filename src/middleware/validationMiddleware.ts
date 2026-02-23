@@ -1,19 +1,19 @@
 import middy from '@middy/core';
 import { z } from 'zod';
 import { ValidationError } from '../utils/errors';
+import { ValidationIssue } from '../types';
 
 interface ValidationOptions {
   body?: z.ZodType;
   query?: z.ZodType;
 }
 
-function formatZodError(error: z.ZodError): string {
-  return error.issues
-    .map((e) => {
-      const path = e.path.join('.');
-      return path ? `${path}: ${e.message}` : e.message;
-    })
-    .join(', ');
+function mapZodIssues(error: z.ZodError): ValidationIssue[] {
+  return error.issues.map((e) => ({
+    field: e.path.join('.'),
+    code: e.code,
+    message: e.message,
+  }));
 }
 
 export const validationMiddleware = (schemas: ValidationOptions): middy.MiddlewareObj => ({
@@ -23,7 +23,7 @@ export const validationMiddleware = (schemas: ValidationOptions): middy.Middlewa
     if (schemas.body) {
       const result = schemas.body.safeParse(event.body);
       if (!result.success) {
-        throw new ValidationError(formatZodError(result.error));
+        throw new ValidationError(mapZodIssues(result.error));
       }
       event.body = result.data;
     }
@@ -32,7 +32,7 @@ export const validationMiddleware = (schemas: ValidationOptions): middy.Middlewa
       const raw = (event.queryStringParameters as Record<string, string>) || {};
       const result = schemas.query.safeParse(raw);
       if (!result.success) {
-        throw new ValidationError(formatZodError(result.error));
+        throw new ValidationError(mapZodIssues(result.error));
       }
       event.queryStringParameters = result.data;
     }

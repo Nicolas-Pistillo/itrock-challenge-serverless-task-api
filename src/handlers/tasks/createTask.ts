@@ -15,7 +15,7 @@ const baseHandler = async (event: AuthenticatedEvent): Promise<APIGatewayProxyRe
   return created(task);
 };
 
-export const handler = middy(baseHandler as never)
+export const handler = middy(baseHandler)
   .use(errorMiddleware())
   .use(jsonBodyParser())
   .use(authMiddleware())

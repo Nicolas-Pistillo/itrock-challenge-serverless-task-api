@@ -22,7 +22,7 @@ function getToken(): string {
 
 function makeEvent(
   overrides: Omit<Partial<APIGatewayProxyEvent>, 'body'> & { body?: unknown },
-): APIGatewayProxyEvent {
+): any {
   const { body, ...rest } = overrides;
   return {
     body: typeof body === 'string' ? body : JSON.stringify(body ?? null),

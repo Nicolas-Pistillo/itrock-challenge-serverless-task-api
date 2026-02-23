@@ -1,4 +1,4 @@
-import { ApiResponse, PaginationMeta } from '../types';
+import { ApiResponse, PaginationMeta, ValidationIssue } from '../types';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -28,6 +28,19 @@ export function error(statusCode: number, code: string, message: string) {
 
   return {
     statusCode,
+    headers,
+    body: JSON.stringify(body),
+  };
+}
+
+export function validationError(issues: ValidationIssue[]) {
+  const body: ApiResponse = {
+    success: false,
+    errors: issues,
+  };
+
+  return {
+    statusCode: 422,
     headers,
     body: JSON.stringify(body),
   };

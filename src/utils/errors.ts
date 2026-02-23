@@ -10,8 +10,8 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string) {
-    super(422, 'VALIDATION_ERROR', message);
+  constructor(public readonly issues: import('../types').ValidationIssue[]) {
+    super(422, 'VALIDATION_ERROR', 'Validation failed');
   }
 }
 

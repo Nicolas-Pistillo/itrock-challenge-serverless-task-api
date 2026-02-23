@@ -58,6 +58,12 @@ export interface PaginationMeta {
   totalPages: number;
 }
 
+export interface ValidationIssue {
+  field: string;
+  code: string;
+  message: string;
+}
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -65,6 +71,7 @@ export interface ApiResponse<T = unknown> {
     code: string;
     message: string;
   };
+  errors?: ValidationIssue[];
   meta?: PaginationMeta;
 }
 
